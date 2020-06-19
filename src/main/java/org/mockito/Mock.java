@@ -23,6 +23,7 @@ import org.mockito.stubbing.Answer;
  * <li>Minimizes repetitive mock creation code.</li>
  * <li>Makes the test class more readable.</li>
  * <li>Makes the verification error easier to read because the <b>field name</b> is used to identify the mock.</li>
+ * <li>Automatically detects static mocks of type {@link MockedStatic} and infers the static mock type of the type parameter.</li>
  * </ul>
  *
  * <pre class="code"><code class="java">

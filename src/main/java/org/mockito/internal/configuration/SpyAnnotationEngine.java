@@ -48,7 +48,7 @@ public class SpyAnnotationEngine
         implements AnnotationEngine, org.mockito.configuration.AnnotationEngine {
 
     @Override
-    public void process(Class<?> context, Object testInstance) {
+    public AutoCloseable process(Class<?> context, Object testInstance) {
         Field[] fields = context.getDeclaredFields();
         for (Field field : fields) {
             if (field.isAnnotationPresent(Spy.class)
@@ -78,6 +78,7 @@ public class SpyAnnotationEngine
                 }
             }
         }
+        return new NoAction();
     }
 
     private static Object spyInstance(Field field, Object instance) {

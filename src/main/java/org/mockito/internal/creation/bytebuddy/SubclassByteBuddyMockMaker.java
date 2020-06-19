@@ -11,6 +11,7 @@ import java.lang.reflect.Modifier;
 import org.mockito.creation.instance.Instantiator;
 import org.mockito.exceptions.base.MockitoException;
 import org.mockito.internal.configuration.plugins.Plugins;
+import org.mockito.internal.creation.StaticMockControl;
 import org.mockito.internal.util.Platform;
 import org.mockito.invocation.MockHandler;
 import org.mockito.mock.MockCreationSettings;
@@ -178,5 +179,16 @@ public class SubclassByteBuddyMockMaker implements ClassCreatingMockMaker {
                 return join("not handled type");
             }
         };
+    }
+
+    @Override
+    public <T> StaticMockControl<T> createStaticMock(
+            Class<T> type, MockCreationSettings<T> settings, MockHandler handler) {
+        throw new MockitoException(
+                join(
+                        "The regular, subclass-based MockMaker does not support the creation of static mocks",
+                        "",
+                        "To enable static mocks, you need to use Mockito's inline mock maker which is based on the Instrumentation API.",
+                        "You can simply enable this mock mode, by placing the 'mockito-inline' artifact where you are currently using 'mockito-core'."));
     }
 }

@@ -25,5 +25,11 @@ public interface AnnotationEngine {
      * @param clazz Class where to extract field information, check implementation for details
      * @param testInstance Test instance
      */
-    void process(Class<?> clazz, Object testInstance);
+    AutoCloseable process(Class<?> clazz, Object testInstance);
+
+    class NoAction implements AutoCloseable {
+
+        @Override
+        public void close() {}
+    }
 }

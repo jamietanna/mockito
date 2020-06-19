@@ -4,7 +4,9 @@
  */
 package org.mockito.android.internal.creation;
 
+import org.mockito.exceptions.base.MockitoException;
 import org.mockito.internal.configuration.plugins.Plugins;
+import org.mockito.internal.creation.StaticMockControl;
 import org.mockito.internal.creation.bytebuddy.SubclassByteBuddyMockMaker;
 import org.mockito.internal.util.Platform;
 import org.mockito.invocation.MockHandler;
@@ -37,6 +39,15 @@ public class AndroidByteBuddyMockMaker implements MockMaker {
     @Override
     public <T> T createMock(MockCreationSettings<T> settings, MockHandler handler) {
         return delegate.createMock(settings, handler);
+    }
+
+    @Override
+    public <T> StaticMockControl<T> createStaticMock(Class<T> type, MockCreationSettings<T> settings, MockHandler handler) {
+        throw new MockitoException(join(
+            "The Android mock maker does not support static mocks.",
+            "",
+            "Support for static mocks is based on the Instrumentation API which Android does not support."
+        ));
     }
 
     @Override

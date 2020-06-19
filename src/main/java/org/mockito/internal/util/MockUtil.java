@@ -9,6 +9,7 @@ import static org.mockito.internal.handler.MockHandlerFactory.createMockHandler;
 import org.mockito.Mockito;
 import org.mockito.exceptions.misusing.NotAMockException;
 import org.mockito.internal.configuration.plugins.Plugins;
+import org.mockito.internal.creation.StaticMockControl;
 import org.mockito.internal.creation.settings.CreationSettings;
 import org.mockito.internal.stubbing.InvocationContainerImpl;
 import org.mockito.internal.util.reflection.LenientCopyTool;
@@ -101,5 +102,11 @@ public class MockUtil {
 
     public static MockCreationSettings getMockSettings(Object mock) {
         return getMockHandler(mock).getMockSettings();
+    }
+
+    public static <T> StaticMockControl<T> createStaticMock(
+            Class<T> type, MockCreationSettings<T> settings) {
+        MockHandler<T> handler = createMockHandler(settings);
+        return mockMaker.createStaticMock(type, settings, handler);
     }
 }

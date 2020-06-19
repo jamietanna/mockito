@@ -5,6 +5,7 @@
 package org.mockito.plugins;
 
 import org.mockito.Incubating;
+import org.mockito.internal.creation.StaticMockControl;
 import org.mockito.invocation.MockHandler;
 import org.mockito.mock.MockCreationSettings;
 
@@ -107,6 +108,26 @@ public interface MockMaker {
      */
     @Incubating
     TypeMockability isTypeMockable(Class<?> type);
+
+    /**
+     * If you want to provide your own implementation of {@code MockMaker} this method should:
+     * <ul>
+     *     <li>Alter the supplied class to only change its behavior in the current thread.</li>
+     *     <li>Only alters the static method's behavior after being enabled.</li>
+     *     <li>Stops the altered behavior when disabled.</li>
+     * </ul>
+     *
+     * @param settings Mock creation settings like type to mock, extra interfaces and so on.
+     * @param handler See {@link org.mockito.invocation.MockHandler}.
+     *                <b>Do not</b> provide your own implementation at this time. Make sure your implementation of
+     *                {@link #getHandler(Object)} will return this instance.
+     * @param <T> Type of the mock to return, actually the <code>settings.getTypeToMock</code>.
+     * @return A control for the static mock.
+     * @since 3.4.0
+     */
+    @Incubating
+    <T> StaticMockControl<T> createStaticMock(
+            Class<T> type, MockCreationSettings<T> settings, MockHandler handler);
 
     /**
      * Carries the mockability information

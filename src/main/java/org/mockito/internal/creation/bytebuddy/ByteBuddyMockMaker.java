@@ -5,6 +5,7 @@
 package org.mockito.internal.creation.bytebuddy;
 
 import org.mockito.Incubating;
+import org.mockito.internal.creation.StaticMockControl;
 import org.mockito.invocation.MockHandler;
 import org.mockito.mock.MockCreationSettings;
 
@@ -44,5 +45,11 @@ public class ByteBuddyMockMaker implements ClassCreatingMockMaker {
     @Incubating
     public TypeMockability isTypeMockable(Class<?> type) {
         return defaultByteBuddyMockMaker.isTypeMockable(type);
+    }
+
+    @Override
+    public <T> StaticMockControl<T> createStaticMock(
+            Class<T> type, MockCreationSettings<T> settings, MockHandler handler) {
+        return defaultByteBuddyMockMaker.createStaticMock(type, settings, handler);
     }
 }

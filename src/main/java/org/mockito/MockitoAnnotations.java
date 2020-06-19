@@ -37,8 +37,14 @@ import org.mockito.plugins.AnnotationEngine;
  *
  *   public class SampleBaseTestCase {
  *
+ *       private AutoCloseable closeable;
+ *
  *       &#064;Before public void initMocks() {
- *           MockitoAnnotations.initMocks(this);
+ *           closeable = MockitoAnnotations.initMocks(this);
+ *       }
+ *
+ *       &#064;After public void releaseMocks() throws Exception {
+ *           closeable.close();
  *       }
  *   }
  * </code></pre>
@@ -49,7 +55,8 @@ import org.mockito.plugins.AnnotationEngine;
  * <p>
  * In above example, <code>initMocks()</code> is called in &#064;Before (JUnit4) method of test's base class.
  * For JUnit3 <code>initMocks()</code> can go to <code>setup()</code> method of a base class.
- * You can also put initMocks() in your JUnit runner (&#064;RunWith) or use built-in runner: {@link MockitoJUnitRunner}
+ * You can also put initMocks() in your JUnit runner (&#064;RunWith) or use built-in runner: {@link MockitoJUnitRunner}.
+ * If static method mocks are used, it is required to close the initialization.
  */
 public class MockitoAnnotations {
 
@@ -59,7 +66,7 @@ public class MockitoAnnotations {
      * <p>
      * See examples in javadoc for {@link MockitoAnnotations} class.
      */
-    public static void initMocks(Object testClass) {
+    public static AutoCloseable initMocks(Object testClass) {
         if (testClass == null) {
             throw new MockitoException(
                     "testClass cannot be null. For info how to use @Mock annotations see examples in javadoc for MockitoAnnotations class");
@@ -67,6 +74,6 @@ public class MockitoAnnotations {
 
         AnnotationEngine annotationEngine =
                 new GlobalConfiguration().tryGetPluginAnnotationEngine();
-        annotationEngine.process(testClass.getClass(), testClass);
+        return annotationEngine.process(testClass.getClass(), testClass);
     }
 }

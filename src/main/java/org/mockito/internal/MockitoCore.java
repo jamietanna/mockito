@@ -7,6 +7,7 @@ package org.mockito.internal;
 import static org.mockito.internal.exceptions.Reporter.*;
 import static org.mockito.internal.progress.ThreadSafeMockingProgress.mockingProgress;
 import static org.mockito.internal.util.MockUtil.createMock;
+import static org.mockito.internal.util.MockUtil.createStaticMock;
 import static org.mockito.internal.util.MockUtil.getInvocationContainer;
 import static org.mockito.internal.util.MockUtil.getMockHandler;
 import static org.mockito.internal.util.MockUtil.isMock;
@@ -20,9 +21,11 @@ import java.util.List;
 
 import org.mockito.InOrder;
 import org.mockito.MockSettings;
+import org.mockito.MockedStatic;
 import org.mockito.MockingDetails;
 import org.mockito.exceptions.misusing.NotAMockException;
 import org.mockito.internal.creation.MockSettingsImpl;
+import org.mockito.internal.creation.StaticMockControl;
 import org.mockito.internal.invocation.finder.VerifiableInvocationsFinder;
 import org.mockito.internal.listeners.VerificationStartedNotifier;
 import org.mockito.internal.progress.MockingProgress;
@@ -66,6 +69,22 @@ public class MockitoCore {
         T mock = createMock(creationSettings);
         mockingProgress().mockingStarted(mock, creationSettings);
         return mock;
+    }
+
+    public <T> MockedStatic<T> mockStatic(Class<T> classToMock, MockSettings settings) {
+        if (!MockSettingsImpl.class.isInstance(settings)) {
+            throw new IllegalArgumentException(
+                    "Unexpected implementation of '"
+                            + settings.getClass().getCanonicalName()
+                            + "'\n"
+                            + "At the moment, you cannot provide your own implementations of that class.");
+        }
+        MockSettingsImpl impl = MockSettingsImpl.class.cast(settings);
+        MockCreationSettings<T> creationSettings = impl.buildStatic(classToMock);
+        StaticMockControl<T> control = createStaticMock(classToMock, creationSettings);
+        control.enable();
+        mockingProgress().mockingStarted(classToMock, creationSettings);
+        return new MockedStatic<>(control);
     }
 
     public <T> OngoingStubbing<T> when(T methodCall) {
